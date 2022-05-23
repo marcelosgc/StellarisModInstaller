@@ -22,15 +22,19 @@ class Program
 
             if (Directory.Exists(newExtractPath))
             {
-                Console.WriteLine("Mod already installed");   
+                Console.WriteLine("Mod already installed");
                 Console.WriteLine($" _-_-_-_-_-");
                 continue;
             }
+
             ZipFile.ExtractToDirectory(f, newExtractPath);
-            
+
             var modFile = Directory.GetFiles(newExtractPath, "*.mod", SearchOption.TopDirectoryOnly);
 
             RemovePathLine(modFile);
+
+            //reloadfile
+            modFile = Directory.GetFiles(newExtractPath, "*.mod", SearchOption.TopDirectoryOnly);
 
             var newFileMod = settings.ModTypeDir +
                              modFile[0].Replace(newExtractPath, "").Replace("descriptor", partName[0]);
@@ -38,22 +42,28 @@ class Program
             if (!File.Exists(newFileMod))
             {
                 File.Copy(modFile[0], newFileMod);
+
+                string[] modFileContent = System.IO.File.ReadAllLines(newFileMod);
+                
+                var n = modFileContent.Append(Constant.NewPath.Replace("{id}", partName[0]));
+                
+                File.WriteAllLines(newFileMod, n);
             }
-            
-            Console.WriteLine($"Arquivo {fileName} finalizado ");
+
+            Console.WriteLine($"File {fileName} finished ");
             Console.WriteLine($" _-_-_-_-_-");
         }
     }
 
     private static void RemovePathLine(string[] modFile)
     {
-         string[] modFileContent = System.IO.File.ReadAllLines(modFile[0]);
+        string[] modFileContent = System.IO.File.ReadAllLines(modFile[0]);
 
-         if (modFileContent.Any(x=>x.StartsWith("path")))
-         {
-             string[] newContent = modFileContent.Where(x => !x.StartsWith("path")).ToArray();
-             File.WriteAllLines(modFile[0], newContent);
-         }
+        if (modFileContent.Any(x => x.StartsWith("path")))
+        {
+            string[] newContent = modFileContent.Where(x => !x.StartsWith("path")).ToArray();
+            File.WriteAllLines(modFile[0], newContent);
+        }
     }
 
     public static Settings MountSettings()
