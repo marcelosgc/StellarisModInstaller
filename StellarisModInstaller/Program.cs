@@ -1,15 +1,12 @@
-﻿using System;
-using System.IO.Compression;
-using System.IO.Enumeration;
+﻿using System.IO.Compression;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
 using StellarisModInstaller.Model;
 
-class Program
+internal class Program
 {
-    static readonly Settings settings = MountSettings();
+    private static readonly Settings settings = MountSettings();
 
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         // GetFromZipFile(settings);
         GetFromDirectory();
@@ -21,51 +18,50 @@ class Program
 
         foreach (var dir in scannedDir)
         {
-            string modFolderName = dir.Replace(settings.SteamCmdDirMod, string.Empty);
+            var modFolderName = dir.Replace(settings.SteamCmdDirMod, string.Empty);
             if (CheckIfModAlreadyInstalled(modFolderName))
             {
                 Console.WriteLine($"Mod {modFolderName} already installed");
-                Console.WriteLine($" _-_-_-_-_-");
+                Console.WriteLine(" _-_-_-_-_-");
                 continue;
             }
 
             Console.WriteLine($"Installing Mod {modFolderName} ... ");
-            string newDirMod = settings.ExtractionDir + modFolderName;
+            var newDirMod = settings.ExtractionDir + modFolderName;
 
             CopyModFolder(dir, newDirMod);
-            
-            
+
+
             ModifyModFile(newDirMod, modFolderName);
             Console.WriteLine($"Mod Installation {modFolderName} is done!  ");
-            Console.WriteLine($" _-_-_-_-_-");
+            Console.WriteLine(" _-_-_-_-_-");
         }
     }
 
     private static void CopyModFolder(string downloadFolder, string newDirMod)
     {
-       
-        if (!Directory.Exists( newDirMod ))
-            Directory.CreateDirectory( newDirMod );
-        string[] files = Directory.GetFiles( downloadFolder );
-        foreach (string file in files)
+        if (!Directory.Exists(newDirMod))
+            Directory.CreateDirectory(newDirMod);
+        var files = Directory.GetFiles(downloadFolder);
+        foreach (var file in files)
         {
-            string name = Path.GetFileName( file );
-            string dest = Path.Combine( newDirMod, name );
-            File.Copy( file, dest );
-        }
-        string[] folders = Directory.GetDirectories( downloadFolder );
-        foreach (string folder in folders)
-        {
-            string name = Path.GetFileName( folder );
-            string dest = Path.Combine( newDirMod, name );
-            CopyModFolder( folder, dest );
+            var name = Path.GetFileName(file);
+            var dest = Path.Combine(newDirMod, name);
+            File.Copy(file, dest);
         }
 
+        var folders = Directory.GetDirectories(downloadFolder);
+        foreach (var folder in folders)
+        {
+            var name = Path.GetFileName(folder);
+            var dest = Path.Combine(newDirMod, name);
+            CopyModFolder(folder, dest);
+        }
     }
 
     private static bool CheckIfModAlreadyInstalled(string modFolderName)
     {
-        string newDirMod = settings.ExtractionDir + modFolderName;
+        var newDirMod = settings.ExtractionDir + modFolderName;
 
         return Directory.Exists(newDirMod);
     }
@@ -95,16 +91,16 @@ class Program
 
         foreach (var f in zipFilesMod)
         {
-            string fileName = f.Replace($"{settings.ModZipDir}\\", "");
+            var fileName = f.Replace($"{settings.ModZipDir}\\", "");
             Console.WriteLine($"File {fileName} is being processed ... ");
             var partName = fileName.Split("_");
 
-            string newExtractPath = settings.ExtractionDir + partName[0];
+            var newExtractPath = settings.ExtractionDir + partName[0];
 
             if (Directory.Exists(newExtractPath))
             {
                 Console.WriteLine("Mod already installed");
-                Console.WriteLine($" _-_-_-_-_-");
+                Console.WriteLine(" _-_-_-_-_-");
                 continue;
             }
 
@@ -113,7 +109,7 @@ class Program
             ModifyModFile(newExtractPath, partName[0]);
 
             Console.WriteLine($"File {fileName} finished ");
-            Console.WriteLine($" _-_-_-_-_-");
+            Console.WriteLine(" _-_-_-_-_-");
         }
     }
 
@@ -133,7 +129,7 @@ class Program
         {
             File.Copy(modFile[0], newFileMod);
 
-            string[] modFileContent = System.IO.File.ReadAllLines(newFileMod);
+            var modFileContent = File.ReadAllLines(newFileMod);
 
             var n = modFileContent.Append(Constant.NewPath.Replace("{id}", modId));
 
@@ -143,11 +139,11 @@ class Program
 
     private static void RemovePathLine(string[] modFile)
     {
-        string[] modFileContent = System.IO.File.ReadAllLines(modFile[0]);
+        var modFileContent = File.ReadAllLines(modFile[0]);
 
         if (modFileContent.Any(x => x.StartsWith("path")))
         {
-            string[] newContent = modFileContent.Where(x => !x.StartsWith("path")).ToArray();
+            var newContent = modFileContent.Where(x => !x.StartsWith("path")).ToArray();
             File.WriteAllLines(modFile[0], newContent);
         }
     }

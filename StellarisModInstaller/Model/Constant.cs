@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace StellarisModInstaller.Model;
+﻿namespace StellarisModInstaller.Model;
 
 public class Constant
 {
