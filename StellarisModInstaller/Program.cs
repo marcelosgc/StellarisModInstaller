@@ -43,9 +43,7 @@ class Program
 
     private static void CopyModFolder(string downloadFolder, string newDirMod)
     {
-        var directoryInfo = Directory.GetParent(downloadFolder);
-        var target = Directory.GetParent(newDirMod);
-
+       
         if (!Directory.Exists( newDirMod ))
             Directory.CreateDirectory( newDirMod );
         string[] files = Directory.GetFiles( downloadFolder );
