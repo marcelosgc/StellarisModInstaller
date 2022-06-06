@@ -23,6 +23,11 @@
 
     <ItemGroup>
       <None Remove="Db\**" />
+      <None Remove="Properties\DataSources\InterfaceModInstaller.Constants.Database.datasource" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Properties\DataSources" />
     </ItemGroup>
 
 </Project>
