@@ -37,4 +37,7 @@ public class Database
                                                         ";
 
     public static List<string> TablesToCheck = new(){"Mods","Directories"};
+    
+    
+    
 }
